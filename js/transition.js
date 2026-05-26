@@ -7,7 +7,7 @@
  * ======================================================================== */
 
 
-+function ($) {
++function (jQuery) {
   'use strict';
 
   // CSS TRANSITION SUPPORT (Shoutout: https://modernizr.com/)
@@ -33,25 +33,25 @@
   }
 
   // https://blog.alexmaccaw.com/css-transitions
-  $.fn.emulateTransitionEnd = function (duration) {
+  jQuery.fn.emulateTransitionEnd = function (duration) {
     var called = false
-    var $el = this
-    $(this).one('bsTransitionEnd', function () { called = true })
-    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    var jQueryel = this
+    jQuery(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) jQuery(jQueryel).trigger(jQuery.support.transition.end) }
     setTimeout(callback, duration)
     return this
   }
 
-  $(function () {
-    $.support.transition = transitionEnd()
+  jQuery(function () {
+    jQuery.support.transition = transitionEnd()
 
-    if (!$.support.transition) return
+    if (!jQuery.support.transition) return
 
-    $.event.special.bsTransitionEnd = {
-      bindType: $.support.transition.end,
-      delegateType: $.support.transition.end,
+    jQuery.event.special.bsTransitionEnd = {
+      bindType: jQuery.support.transition.end,
+      delegateType: jQuery.support.transition.end,
       handle: function (e) {
-        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+        if (jQuery(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
       }
     }
   })

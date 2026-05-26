@@ -42,4 +42,4 @@ cdn:
   css_theme:      https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css
   css_theme_hash: "sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ"
   js:             https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js
-  js_hash:        "sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+  js_hash:        "sha384-brcg0Gqq7nuar5lALVhc62RJdBJxDe0ZKMlV4axZnndyz5yGsxHwBqzAHPHKxLiX"

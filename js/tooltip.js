@@ -7,7 +7,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
-+function ($) {
++function (jQuery) {
   'use strict';
 
   var DISALLOWED_ATTRIBUTES = ['sanitize', 'whiteList', 'sanitizeFn']
@@ -23,7 +23,7 @@
     'xlink:href'
   ]
 
-  var ARIA_ATTRIBUTE_PATTERN = /^aria-[\w-]*$/i
+  var ARIA_ATTRIBUTE_PATTERN = /^aria-[\w-]*jQuery/i
 
   var DefaultWhitelist = {
     // Global attributes allowed on any supplied element below.
@@ -64,27 +64,27 @@
    *
    * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
    */
-  var SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|$))/gi
+  var SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|jQuery))/gi
 
   /**
    * A pattern that matches safe data URLs. Only matches image, video and audio types.
    *
    * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
    */
-  var DATA_URL_PATTERN = /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[a-z0-9+/]+=*$/i
+  var DATA_URL_PATTERN = /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[a-z0-9+/]+=*jQuery/i
 
   function allowedAttribute(attr, allowedAttributeList) {
     var attrName = attr.nodeName.toLowerCase()
 
-    if ($.inArray(attrName, allowedAttributeList) !== -1) {
-      if ($.inArray(attrName, uriAttrs) !== -1) {
+    if (jQuery.inArray(attrName, allowedAttributeList) !== -1) {
+      if (jQuery.inArray(attrName, uriAttrs) !== -1) {
         return Boolean(attr.nodeValue.match(SAFE_URL_PATTERN) || attr.nodeValue.match(DATA_URL_PATTERN))
       }
 
       return true
     }
 
-    var regExp = $(allowedAttributeList).filter(function (index, value) {
+    var regExp = jQuery(allowedAttributeList).filter(function (index, value) {
       return value instanceof RegExp
     })
 
@@ -107,7 +107,7 @@
     this.enabled    = null
     this.timeout    = null
     this.hoverState = null
-    this.$element   = null
+    this.jQueryelement   = null
     this.inState    = null
 
     this.init('tooltip', element, options)
@@ -139,12 +139,12 @@
   Tooltip.prototype.init = function (type, element, options) {
     this.enabled   = true
     this.type      = type
-    this.$element  = $(element)
+    this.jQueryelement  = jQuery(element)
     this.options   = this.getOptions(options)
-    this.$viewport = this.options.viewport && $(document).find($.isFunction(this.options.viewport) ? this.options.viewport.call(this, this.$element) : (this.options.viewport.selector || this.options.viewport))
+    this.jQueryviewport = this.options.viewport && jQuery(document).find(jQuery.isFunction(this.options.viewport) ? this.options.viewport.call(this, this.jQueryelement) : (this.options.viewport.selector || this.options.viewport))
     this.inState   = { click: false, hover: false, focus: false }
 
-    if (this.$element[0] instanceof document.constructor && !this.options.selector) {
+    if (this.jQueryelement[0] instanceof document.constructor && !this.options.selector) {
       throw new Error('`selector` option must be specified when initializing ' + this.type + ' on the window.document object!')
     }
 
@@ -154,18 +154,18 @@
       var trigger = triggers[i]
 
       if (trigger == 'click') {
-        this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
+        this.jQueryelement.on('click.' + this.type, this.options.selector, jQuery.proxy(this.toggle, this))
       } else if (trigger != 'manual') {
         var eventIn  = trigger == 'hover' ? 'mouseenter' : 'focusin'
         var eventOut = trigger == 'hover' ? 'mouseleave' : 'focusout'
 
-        this.$element.on(eventIn  + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
-        this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
+        this.jQueryelement.on(eventIn  + '.' + this.type, this.options.selector, jQuery.proxy(this.enter, this))
+        this.jQueryelement.on(eventOut + '.' + this.type, this.options.selector, jQuery.proxy(this.leave, this))
       }
     }
 
     this.options.selector ?
-      (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
+      (this._options = jQuery.extend({}, this.options, { trigger: 'manual', selector: '' })) :
       this.fixTitle()
   }
 
@@ -250,15 +250,15 @@
   }
 
   Tooltip.prototype.getOptions = function (options) {
-    var dataAttributes = this.$element.data()
+    var dataAttributes = this.jQueryelement.data()
 
     for (var dataAttr in dataAttributes) {
-      if (dataAttributes.hasOwnProperty(dataAttr) && $.inArray(dataAttr, DISALLOWED_ATTRIBUTES) !== -1) {
+      if (dataAttributes.hasOwnProperty(dataAttr) && jQuery.inArray(dataAttr, DISALLOWED_ATTRIBUTES) !== -1) {
         delete dataAttributes[dataAttr]
       }
     }
 
-    options = $.extend({}, this.getDefaults(), dataAttributes, options)
+    options = jQuery.extend({}, this.getDefaults(), dataAttributes, options)
 
     if (options.delay && typeof options.delay == 'number') {
       options.delay = {
@@ -278,7 +278,7 @@
     var options  = {}
     var defaults = this.getDefaults()
 
-    this._options && $.each(this._options, function (key, value) {
+    this._options && jQuery.each(this._options, function (key, value) {
       if (defaults[key] != value) options[key] = value
     })
 
@@ -287,14 +287,14 @@
 
   Tooltip.prototype.enter = function (obj) {
     var self = obj instanceof this.constructor ?
-      obj : $(obj.currentTarget).data('bs.' + this.type)
+      obj : jQuery(obj.currentTarget).data('bs.' + this.type)
 
     if (!self) {
       self = new this.constructor(obj.currentTarget, this.getDelegateOptions())
-      $(obj.currentTarget).data('bs.' + this.type, self)
+      jQuery(obj.currentTarget).data('bs.' + this.type, self)
     }
 
-    if (obj instanceof $.Event) {
+    if (obj instanceof jQuery.Event) {
       self.inState[obj.type == 'focusin' ? 'focus' : 'hover'] = true
     }
 
@@ -324,14 +324,14 @@
 
   Tooltip.prototype.leave = function (obj) {
     var self = obj instanceof this.constructor ?
-      obj : $(obj.currentTarget).data('bs.' + this.type)
+      obj : jQuery(obj.currentTarget).data('bs.' + this.type)
 
     if (!self) {
       self = new this.constructor(obj.currentTarget, this.getDelegateOptions())
-      $(obj.currentTarget).data('bs.' + this.type, self)
+      jQuery(obj.currentTarget).data('bs.' + this.type, self)
     }
 
-    if (obj instanceof $.Event) {
+    if (obj instanceof jQuery.Event) {
       self.inState[obj.type == 'focusout' ? 'focus' : 'hover'] = false
     }
 
@@ -349,49 +349,49 @@
   }
 
   Tooltip.prototype.show = function () {
-    var e = $.Event('show.bs.' + this.type)
+    var e = jQuery.Event('show.bs.' + this.type)
 
     if (this.hasContent() && this.enabled) {
-      this.$element.trigger(e)
+      this.jQueryelement.trigger(e)
 
-      var inDom = $.contains(this.$element[0].ownerDocument.documentElement, this.$element[0])
+      var inDom = jQuery.contains(this.jQueryelement[0].ownerDocument.documentElement, this.jQueryelement[0])
       if (e.isDefaultPrevented() || !inDom) return
       var that = this
 
-      var $tip = this.tip()
+      var jQuerytip = this.tip()
 
       var tipId = this.getUID(this.type)
 
       this.setContent()
-      $tip.attr('id', tipId)
-      this.$element.attr('aria-describedby', tipId)
+      jQuerytip.attr('id', tipId)
+      this.jQueryelement.attr('aria-describedby', tipId)
 
-      if (this.options.animation) $tip.addClass('fade')
+      if (this.options.animation) jQuerytip.addClass('fade')
 
       var placement = typeof this.options.placement == 'function' ?
-        this.options.placement.call(this, $tip[0], this.$element[0]) :
+        this.options.placement.call(this, jQuerytip[0], this.jQueryelement[0]) :
         this.options.placement
 
       var autoToken = /\s?auto?\s?/i
       var autoPlace = autoToken.test(placement)
       if (autoPlace) placement = placement.replace(autoToken, '') || 'top'
 
-      $tip
+      jQuerytip
         .detach()
         .css({ top: 0, left: 0, display: 'block' })
         .addClass(placement)
         .data('bs.' + this.type, this)
 
-      this.options.container ? $tip.appendTo($(document).find(this.options.container)) : $tip.insertAfter(this.$element)
-      this.$element.trigger('inserted.bs.' + this.type)
+      this.options.container ? jQuerytip.appendTo(jQuery(document).find(this.options.container)) : jQuerytip.insertAfter(this.jQueryelement)
+      this.jQueryelement.trigger('inserted.bs.' + this.type)
 
       var pos          = this.getPosition()
-      var actualWidth  = $tip[0].offsetWidth
-      var actualHeight = $tip[0].offsetHeight
+      var actualWidth  = jQuerytip[0].offsetWidth
+      var actualHeight = jQuerytip[0].offsetHeight
 
       if (autoPlace) {
         var orgPlacement = placement
-        var viewportDim = this.getPosition(this.$viewport)
+        var viewportDim = this.getPosition(this.jQueryviewport)
 
         placement = placement == 'bottom' && pos.bottom + actualHeight > viewportDim.bottom ? 'top'    :
                     placement == 'top'    && pos.top    - actualHeight < viewportDim.top    ? 'bottom' :
@@ -399,7 +399,7 @@
                     placement == 'left'   && pos.left   - actualWidth  < viewportDim.left   ? 'right'  :
                     placement
 
-        $tip
+        jQuerytip
           .removeClass(orgPlacement)
           .addClass(placement)
       }
@@ -410,14 +410,14 @@
 
       var complete = function () {
         var prevHoverState = that.hoverState
-        that.$element.trigger('shown.bs.' + that.type)
+        that.jQueryelement.trigger('shown.bs.' + that.type)
         that.hoverState = null
 
         if (prevHoverState == 'out') that.leave(that)
       }
 
-      $.support.transition && this.$tip.hasClass('fade') ?
-        $tip
+      jQuery.support.transition && this.jQuerytip.hasClass('fade') ?
+        jQuerytip
           .one('bsTransitionEnd', complete)
           .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
         complete()
@@ -425,13 +425,13 @@
   }
 
   Tooltip.prototype.applyPlacement = function (offset, placement) {
-    var $tip   = this.tip()
-    var width  = $tip[0].offsetWidth
-    var height = $tip[0].offsetHeight
+    var jQuerytip   = this.tip()
+    var width  = jQuerytip[0].offsetWidth
+    var height = jQuerytip[0].offsetHeight
 
     // manually read margins because getBoundingClientRect includes difference
-    var marginTop = parseInt($tip.css('margin-top'), 10)
-    var marginLeft = parseInt($tip.css('margin-left'), 10)
+    var marginTop = parseInt(jQuerytip.css('margin-top'), 10)
+    var marginLeft = parseInt(jQuerytip.css('margin-left'), 10)
 
     // we must check for NaN for ie 8/9
     if (isNaN(marginTop))  marginTop  = 0
@@ -440,22 +440,22 @@
     offset.top  += marginTop
     offset.left += marginLeft
 
-    // $.fn.offset doesn't round pixel values
+    // jQuery.fn.offset doesn't round pixel values
     // so we use setOffset directly with our own function B-0
-    $.offset.setOffset($tip[0], $.extend({
+    jQuery.offset.setOffset(jQuerytip[0], jQuery.extend({
       using: function (props) {
-        $tip.css({
+        jQuerytip.css({
           top: Math.round(props.top),
           left: Math.round(props.left)
         })
       }
     }, offset), 0)
 
-    $tip.addClass('in')
+    jQuerytip.addClass('in')
 
     // check to see if placing tip in new offset caused the tip to resize itself
-    var actualWidth  = $tip[0].offsetWidth
-    var actualHeight = $tip[0].offsetHeight
+    var actualWidth  = jQuerytip[0].offsetWidth
+    var actualHeight = jQuerytip[0].offsetHeight
 
     if (placement == 'top' && actualHeight != height) {
       offset.top = offset.top + height - actualHeight
@@ -470,8 +470,8 @@
     var arrowDelta          = isVertical ? delta.left * 2 - width + actualWidth : delta.top * 2 - height + actualHeight
     var arrowOffsetPosition = isVertical ? 'offsetWidth' : 'offsetHeight'
 
-    $tip.offset(offset)
-    this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], isVertical)
+    jQuerytip.offset(offset)
+    this.replaceArrow(arrowDelta, jQuerytip[0][arrowOffsetPosition], isVertical)
   }
 
   Tooltip.prototype.replaceArrow = function (delta, dimension, isVertical) {
@@ -481,7 +481,7 @@
   }
 
   Tooltip.prototype.setContent = function () {
-    var $tip  = this.tip()
+    var jQuerytip  = this.tip()
     var title = this.getTitle()
 
     if (this.options.html) {
@@ -489,37 +489,37 @@
         title = this.sanitizeHtml(title, this.options.whiteList)
       }
 
-      $tip.find('.tooltip-inner').html(title)
+      jQuerytip.find('.tooltip-inner').html(title)
     } else {
-      $tip.find('.tooltip-inner').text(title)
+      jQuerytip.find('.tooltip-inner').text(title)
     }
 
-    $tip.removeClass('fade in top bottom left right')
+    jQuerytip.removeClass('fade in top bottom left right')
   }
 
   Tooltip.prototype.hide = function (callback) {
     var that = this
-    var $tip = $(this.$tip)
-    var e    = $.Event('hide.bs.' + this.type)
+    var jQuerytip = jQuery(this.jQuerytip)
+    var e    = jQuery.Event('hide.bs.' + this.type)
 
     function complete() {
-      if (that.hoverState != 'in') $tip.detach()
-      if (that.$element) { // TODO: Check whether guarding this code with this `if` is really necessary.
-        that.$element
+      if (that.hoverState != 'in') jQuerytip.detach()
+      if (that.jQueryelement) { // TODO: Check whether guarding this code with this `if` is really necessary.
+        that.jQueryelement
           .removeAttr('aria-describedby')
           .trigger('hidden.bs.' + that.type)
       }
       callback && callback()
     }
 
-    this.$element.trigger(e)
+    this.jQueryelement.trigger(e)
 
     if (e.isDefaultPrevented()) return
 
-    $tip.removeClass('in')
+    jQuerytip.removeClass('in')
 
-    $.support.transition && $tip.hasClass('fade') ?
-      $tip
+    jQuery.support.transition && jQuerytip.hasClass('fade') ?
+      jQuerytip
         .one('bsTransitionEnd', complete)
         .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
       complete()
@@ -530,9 +530,9 @@
   }
 
   Tooltip.prototype.fixTitle = function () {
-    var $e = this.$element
-    if ($e.attr('title') || typeof $e.attr('data-original-title') != 'string') {
-      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+    var jQuerye = this.jQueryelement
+    if (jQuerye.attr('title') || typeof jQuerye.attr('data-original-title') != 'string') {
+      jQuerye.attr('data-original-title', jQuerye.attr('title') || '').attr('title', '')
     }
   }
 
@@ -540,25 +540,25 @@
     return this.getTitle()
   }
 
-  Tooltip.prototype.getPosition = function ($element) {
-    $element   = $element || this.$element
+  Tooltip.prototype.getPosition = function (jQueryelement) {
+    jQueryelement   = jQueryelement || this.jQueryelement
 
-    var el     = $element[0]
+    var el     = jQueryelement[0]
     var isBody = el.tagName == 'BODY'
 
     var elRect    = el.getBoundingClientRect()
     if (elRect.width == null) {
       // width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
-      elRect = $.extend({}, elRect, { width: elRect.right - elRect.left, height: elRect.bottom - elRect.top })
+      elRect = jQuery.extend({}, elRect, { width: elRect.right - elRect.left, height: elRect.bottom - elRect.top })
     }
     var isSvg = window.SVGElement && el instanceof window.SVGElement
-    // Avoid using $.offset() on SVGs since it gives incorrect results in jQuery 3.
+    // Avoid using jQuery.offset() on SVGs since it gives incorrect results in jQuery 3.
     // See https://github.com/twbs/bootstrap/issues/20280
-    var elOffset  = isBody ? { top: 0, left: 0 } : (isSvg ? null : $element.offset())
-    var scroll    = { scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop() }
-    var outerDims = isBody ? { width: $(window).width(), height: $(window).height() } : null
+    var elOffset  = isBody ? { top: 0, left: 0 } : (isSvg ? null : jQueryelement.offset())
+    var scroll    = { scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : jQueryelement.scrollTop() }
+    var outerDims = isBody ? { width: jQuery(window).width(), height: jQuery(window).height() } : null
 
-    return $.extend({}, elRect, scroll, outerDims, elOffset)
+    return jQuery.extend({}, elRect, scroll, outerDims, elOffset)
   }
 
   Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
@@ -571,10 +571,10 @@
 
   Tooltip.prototype.getViewportAdjustedDelta = function (placement, pos, actualWidth, actualHeight) {
     var delta = { top: 0, left: 0 }
-    if (!this.$viewport) return delta
+    if (!this.jQueryviewport) return delta
 
     var viewportPadding = this.options.viewport && this.options.viewport.padding || 0
-    var viewportDimensions = this.getPosition(this.$viewport)
+    var viewportDimensions = this.getPosition(this.jQueryviewport)
 
     if (/right|left/.test(placement)) {
       var topEdgeOffset    = pos.top - viewportPadding - viewportDimensions.scroll
@@ -599,11 +599,11 @@
 
   Tooltip.prototype.getTitle = function () {
     var title
-    var $e = this.$element
+    var jQuerye = this.jQueryelement
     var o  = this.options
 
-    title = $e.attr('data-original-title')
-      || (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
+    title = jQuerye.attr('data-original-title')
+      || (typeof o.title == 'function' ? o.title.call(jQuerye[0]) :  o.title)
 
     return title
   }
@@ -615,17 +615,17 @@
   }
 
   Tooltip.prototype.tip = function () {
-    if (!this.$tip) {
-      this.$tip = $(this.options.template)
-      if (this.$tip.length != 1) {
+    if (!this.jQuerytip) {
+      this.jQuerytip = jQuery(this.options.template)
+      if (this.jQuerytip.length != 1) {
         throw new Error(this.type + ' `template` option must consist of exactly 1 top-level element!')
       }
     }
-    return this.$tip
+    return this.jQuerytip
   }
 
   Tooltip.prototype.arrow = function () {
-    return (this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow'))
+    return (this.jQueryarrow = this.jQueryarrow || this.tip().find('.tooltip-arrow'))
   }
 
   Tooltip.prototype.enable = function () {
@@ -643,10 +643,10 @@
   Tooltip.prototype.toggle = function (e) {
     var self = this
     if (e) {
-      self = $(e.currentTarget).data('bs.' + this.type)
+      self = jQuery(e.currentTarget).data('bs.' + this.type)
       if (!self) {
         self = new this.constructor(e.currentTarget, this.getDelegateOptions())
-        $(e.currentTarget).data('bs.' + this.type, self)
+        jQuery(e.currentTarget).data('bs.' + this.type, self)
       }
     }
 
@@ -663,14 +663,14 @@
     var that = this
     clearTimeout(this.timeout)
     this.hide(function () {
-      that.$element.off('.' + that.type).removeData('bs.' + that.type)
-      if (that.$tip) {
-        that.$tip.detach()
+      that.jQueryelement.off('.' + that.type).removeData('bs.' + that.type)
+      if (that.jQuerytip) {
+        that.jQuerytip.detach()
       }
-      that.$tip = null
-      that.$arrow = null
-      that.$viewport = null
-      that.$element = null
+      that.jQuerytip = null
+      that.jQueryarrow = null
+      that.jQueryviewport = null
+      that.jQueryelement = null
     })
   }
 
@@ -679,27 +679,27 @@
 
   function Plugin(option) {
     return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.tooltip')
+      var jQuerythis   = jQuery(this)
+      var data    = jQuerythis.data('bs.tooltip')
       var options = typeof option == 'object' && option
 
       if (!data && /destroy|hide/.test(option)) return
-      if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
+      if (!data) jQuerythis.data('bs.tooltip', (data = new Tooltip(this, options)))
       if (typeof option == 'string') data[option]()
     })
   }
 
-  var old = $.fn.tooltip
+  var old = jQuery.fn.tooltip
 
-  $.fn.tooltip             = Plugin
-  $.fn.tooltip.Constructor = Tooltip
+  jQuery.fn.tooltip             = Plugin
+  jQuery.fn.tooltip.Constructor = Tooltip
 
 
   // TOOLTIP NO CONFLICT
   // ===================
 
-  $.fn.tooltip.noConflict = function () {
-    $.fn.tooltip = old
+  jQuery.fn.tooltip.noConflict = function () {
+    jQuery.fn.tooltip = old
     return this
   }
 

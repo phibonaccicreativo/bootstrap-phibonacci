@@ -7,7 +7,7 @@
  * ======================================================================== */
 
 
-+function ($) {
++function (jQuery) {
   'use strict';
 
   // TAB CLASS DEFINITION
@@ -15,7 +15,7 @@
 
   var Tab = function (element) {
     // jscs:disable requireDollarBeforejQueryAssignment
-    this.element = $(element)
+    this.element = jQuery(element)
     // jscs:enable requireDollarBeforejQueryAssignment
   }
 
@@ -24,53 +24,53 @@
   Tab.TRANSITION_DURATION = 150
 
   Tab.prototype.show = function () {
-    var $this    = this.element
-    var $ul      = $this.closest('ul:not(.dropdown-menu)')
-    var selector = $this.data('target')
+    var jQuerythis    = this.element
+    var jQueryul      = jQuerythis.closest('ul:not(.dropdown-menu)')
+    var selector = jQuerythis.data('target')
 
     if (!selector) {
-      selector = $this.attr('href')
-      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+      selector = jQuerythis.attr('href')
+      selector = selector && selector.replace(/.*(?=#[^\s]*jQuery)/, '') // strip for ie7
     }
 
-    if ($this.parent('li').hasClass('active')) return
+    if (jQuerythis.parent('li').hasClass('active')) return
 
-    var $previous = $ul.find('.active:last a')
-    var hideEvent = $.Event('hide.bs.tab', {
-      relatedTarget: $this[0]
+    var jQueryprevious = jQueryul.find('.active:last a')
+    var hideEvent = jQuery.Event('hide.bs.tab', {
+      relatedTarget: jQuerythis[0]
     })
-    var showEvent = $.Event('show.bs.tab', {
-      relatedTarget: $previous[0]
+    var showEvent = jQuery.Event('show.bs.tab', {
+      relatedTarget: jQueryprevious[0]
     })
 
-    $previous.trigger(hideEvent)
-    $this.trigger(showEvent)
+    jQueryprevious.trigger(hideEvent)
+    jQuerythis.trigger(showEvent)
 
     if (showEvent.isDefaultPrevented() || hideEvent.isDefaultPrevented()) return
 
-    var $target = $(document).find(selector)
+    var jQuerytarget = jQuery(document).find(selector)
 
-    this.activate($this.closest('li'), $ul)
-    this.activate($target, $target.parent(), function () {
-      $previous.trigger({
+    this.activate(jQuerythis.closest('li'), jQueryul)
+    this.activate(jQuerytarget, jQuerytarget.parent(), function () {
+      jQueryprevious.trigger({
         type: 'hidden.bs.tab',
-        relatedTarget: $this[0]
+        relatedTarget: jQuerythis[0]
       })
-      $this.trigger({
+      jQuerythis.trigger({
         type: 'shown.bs.tab',
-        relatedTarget: $previous[0]
+        relatedTarget: jQueryprevious[0]
       })
     })
   }
 
   Tab.prototype.activate = function (element, container, callback) {
-    var $active    = container.find('> .active')
+    var jQueryactive    = container.find('> .active')
     var transition = callback
-      && $.support.transition
-      && ($active.length && $active.hasClass('fade') || !!container.find('> .fade').length)
+      && jQuery.support.transition
+      && (jQueryactive.length && jQueryactive.hasClass('fade') || !!container.find('> .fade').length)
 
     function next() {
-      $active
+      jQueryactive
         .removeClass('active')
         .find('> .dropdown-menu > .active')
         .removeClass('active')
@@ -102,13 +102,13 @@
       callback && callback()
     }
 
-    $active.length && transition ?
-      $active
+    jQueryactive.length && transition ?
+      jQueryactive
         .one('bsTransitionEnd', next)
         .emulateTransitionEnd(Tab.TRANSITION_DURATION) :
       next()
 
-    $active.removeClass('in')
+    jQueryactive.removeClass('in')
   }
 
 
@@ -117,25 +117,25 @@
 
   function Plugin(option) {
     return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('bs.tab')
+      var jQuerythis = jQuery(this)
+      var data  = jQuerythis.data('bs.tab')
 
-      if (!data) $this.data('bs.tab', (data = new Tab(this)))
+      if (!data) jQuerythis.data('bs.tab', (data = new Tab(this)))
       if (typeof option == 'string') data[option]()
     })
   }
 
-  var old = $.fn.tab
+  var old = jQuery.fn.tab
 
-  $.fn.tab             = Plugin
-  $.fn.tab.Constructor = Tab
+  jQuery.fn.tab             = Plugin
+  jQuery.fn.tab.Constructor = Tab
 
 
   // TAB NO CONFLICT
   // ===============
 
-  $.fn.tab.noConflict = function () {
-    $.fn.tab = old
+  jQuery.fn.tab.noConflict = function () {
+    jQuery.fn.tab = old
     return this
   }
 
@@ -145,10 +145,10 @@
 
   var clickHandler = function (e) {
     e.preventDefault()
-    Plugin.call($(this), 'show')
+    Plugin.call(jQuery(this), 'show')
   }
 
-  $(document)
+  jQuery(document)
     .on('click.bs.tab.data-api', '[data-toggle="tab"]', clickHandler)
     .on('click.bs.tab.data-api', '[data-toggle="pill"]', clickHandler)
 

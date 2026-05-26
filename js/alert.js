@@ -7,7 +7,7 @@
  * ======================================================================== */
 
 
-+function ($) {
++function (jQuery) {
   'use strict';
 
   // ALERT CLASS DEFINITION
@@ -15,7 +15,7 @@
 
   var dismiss = '[data-dismiss="alert"]'
   var Alert   = function (el) {
-    $(el).on('click', dismiss, this.close)
+    jQuery(el).on('click', dismiss, this.close)
   }
 
   Alert.VERSION = '3.4.1'
@@ -23,36 +23,36 @@
   Alert.TRANSITION_DURATION = 150
 
   Alert.prototype.close = function (e) {
-    var $this    = $(this)
-    var selector = $this.attr('data-target')
+    var jQuerythis    = jQuery(this)
+    var selector = jQuerythis.attr('data-target')
 
     if (!selector) {
-      selector = $this.attr('href')
-      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+      selector = jQuerythis.attr('href')
+      selector = selector && selector.replace(/.*(?=#[^\s]*jQuery)/, '') // strip for ie7
     }
 
     selector    = selector === '#' ? [] : selector
-    var $parent = $(document).find(selector)
+    var jQueryparent = jQuery(document).find(selector)
 
     if (e) e.preventDefault()
 
-    if (!$parent.length) {
-      $parent = $this.closest('.alert')
+    if (!jQueryparent.length) {
+      jQueryparent = jQuerythis.closest('.alert')
     }
 
-    $parent.trigger(e = $.Event('close.bs.alert'))
+    jQueryparent.trigger(e = jQuery.Event('close.bs.alert'))
 
     if (e.isDefaultPrevented()) return
 
-    $parent.removeClass('in')
+    jQueryparent.removeClass('in')
 
     function removeElement() {
       // detach from parent, fire event then clean up data
-      $parent.detach().trigger('closed.bs.alert').remove()
+      jQueryparent.detach().trigger('closed.bs.alert').remove()
     }
 
-    $.support.transition && $parent.hasClass('fade') ?
-      $parent
+    jQuery.support.transition && jQueryparent.hasClass('fade') ?
+      jQueryparent
         .one('bsTransitionEnd', removeElement)
         .emulateTransitionEnd(Alert.TRANSITION_DURATION) :
       removeElement()
@@ -64,25 +64,25 @@
 
   function Plugin(option) {
     return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('bs.alert')
+      var jQuerythis = jQuery(this)
+      var data  = jQuerythis.data('bs.alert')
 
-      if (!data) $this.data('bs.alert', (data = new Alert(this)))
-      if (typeof option == 'string') data[option].call($this)
+      if (!data) jQuerythis.data('bs.alert', (data = new Alert(this)))
+      if (typeof option == 'string') data[option].call(jQuerythis)
     })
   }
 
-  var old = $.fn.alert
+  var old = jQuery.fn.alert
 
-  $.fn.alert             = Plugin
-  $.fn.alert.Constructor = Alert
+  jQuery.fn.alert             = Plugin
+  jQuery.fn.alert.Constructor = Alert
 
 
   // ALERT NO CONFLICT
   // =================
 
-  $.fn.alert.noConflict = function () {
-    $.fn.alert = old
+  jQuery.fn.alert.noConflict = function () {
+    jQuery.fn.alert = old
     return this
   }
 
@@ -90,6 +90,6 @@
   // ALERT DATA-API
   // ==============
 
-  $(document).on('click.bs.alert.data-api', dismiss, Alert.prototype.close)
+  jQuery(document).on('click.bs.alert.data-api', dismiss, Alert.prototype.close)
 
 }(jQuery);

@@ -15,15 +15,15 @@ function sanitizeInput(input) {
   return tempDiv.innerHTML
 }
 
-+function ($) {
++function (jQuery) {
   'use strict';
 
   // BUTTON PUBLIC CLASS DEFINITION
   // ==============================
 
   var Button = function (element, options) {
-    this.$element  = $(element)
-    this.options   = $.extend({}, Button.DEFAULTS, options)
+    this.jQueryelement  = jQuery(element)
+    this.options   = jQuery.extend({}, Button.DEFAULTS, options)
     this.isLoading = false
   }
 
@@ -35,47 +35,47 @@ function sanitizeInput(input) {
 
   Button.prototype.setState = function (state) {
     var d    = 'disabled'
-    var $el  = this.$element
-    var val  = $el.is('input') ? 'val' : 'html'
-    var data = $el.data()
+    var jQueryel  = this.jQueryelement
+    var val  = jQueryel.is('input') ? 'val' : 'html'
+    var data = jQueryel.data()
 
     state += 'Text'
 
-    if (data.resetText == null) $el.data('resetText', $el[val]())
+    if (data.resetText == null) jQueryel.data('resetText', jQueryel[val]())
 
     // push to event loop to allow forms to submit
-    setTimeout($.proxy(function () {
-      $el[val](data[state] == null ? this.options[state] : sanitizeInput(data[state]))
+    setTimeout(jQuery.proxy(function () {
+      jQueryel[val](data[state] == null ? this.options[state] : sanitizeInput(data[state]))
 
       if (state == 'loadingText') {
         this.isLoading = true
-        $el.addClass(d).attr(d, d).prop(d, true)
+        jQueryel.addClass(d).attr(d, d).prop(d, true)
       } else if (this.isLoading) {
         this.isLoading = false
-        $el.removeClass(d).removeAttr(d).prop(d, false)
+        jQueryel.removeClass(d).removeAttr(d).prop(d, false)
       }
     }, this), 0)
   }
 
   Button.prototype.toggle = function () {
     var changed = true
-    var $parent = this.$element.closest('[data-toggle="buttons"]')
+    var jQueryparent = this.jQueryelement.closest('[data-toggle="buttons"]')
 
-    if ($parent.length) {
-      var $input = this.$element.find('input')
-      if ($input.prop('type') == 'radio') {
-        if ($input.prop('checked')) changed = false
-        $parent.find('.active').removeClass('active')
-        this.$element.addClass('active')
-      } else if ($input.prop('type') == 'checkbox') {
-        if (($input.prop('checked')) !== this.$element.hasClass('active')) changed = false
-        this.$element.toggleClass('active')
+    if (jQueryparent.length) {
+      var jQueryinput = this.jQueryelement.find('input')
+      if (jQueryinput.prop('type') == 'radio') {
+        if (jQueryinput.prop('checked')) changed = false
+        jQueryparent.find('.active').removeClass('active')
+        this.jQueryelement.addClass('active')
+      } else if (jQueryinput.prop('type') == 'checkbox') {
+        if ((jQueryinput.prop('checked')) !== this.jQueryelement.hasClass('active')) changed = false
+        this.jQueryelement.toggleClass('active')
       }
-      $input.prop('checked', this.$element.hasClass('active'))
-      if (changed) $input.trigger('change')
+      jQueryinput.prop('checked', this.jQueryelement.hasClass('active'))
+      if (changed) jQueryinput.trigger('change')
     } else {
-      this.$element.attr('aria-pressed', !this.$element.hasClass('active'))
-      this.$element.toggleClass('active')
+      this.jQueryelement.attr('aria-pressed', !this.jQueryelement.hasClass('active'))
+      this.jQueryelement.toggleClass('active')
     }
   }
 
@@ -85,28 +85,28 @@ function sanitizeInput(input) {
 
   function Plugin(option) {
     return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.button')
+      var jQuerythis   = jQuery(this)
+      var data    = jQuerythis.data('bs.button')
       var options = typeof option == 'object' && option
 
-      if (!data) $this.data('bs.button', (data = new Button(this, options)))
+      if (!data) jQuerythis.data('bs.button', (data = new Button(this, options)))
 
       if (option == 'toggle') data.toggle()
       else if (option) data.setState(option)
     })
   }
 
-  var old = $.fn.button
+  var old = jQuery.fn.button
 
-  $.fn.button             = Plugin
-  $.fn.button.Constructor = Button
+  jQuery.fn.button             = Plugin
+  jQuery.fn.button.Constructor = Button
 
 
   // BUTTON NO CONFLICT
   // ==================
 
-  $.fn.button.noConflict = function () {
-    $.fn.button = old
+  jQuery.fn.button.noConflict = function () {
+    jQuery.fn.button = old
     return this
   }
 
@@ -114,20 +114,20 @@ function sanitizeInput(input) {
   // BUTTON DATA-API
   // ===============
 
-  $(document)
+  jQuery(document)
     .on('click.bs.button.data-api', '[data-toggle^="button"]', function (e) {
-      var $btn = $(e.target).closest('.btn')
-      Plugin.call($btn, 'toggle')
-      if (!($(e.target).is('input[type="radio"], input[type="checkbox"]'))) {
+      var jQuerybtn = jQuery(e.target).closest('.btn')
+      Plugin.call(jQuerybtn, 'toggle')
+      if (!(jQuery(e.target).is('input[type="radio"], input[type="checkbox"]'))) {
         // Prevent double click on radios, and the double selections (so cancellation) on checkboxes
         e.preventDefault()
         // The target component still receive the focus
-        if ($btn.is('input,button')) $btn.trigger('focus')
-        else $btn.find('input:visible,button:visible').first().trigger('focus')
+        if (jQuerybtn.is('input,button')) jQuerybtn.trigger('focus')
+        else jQuerybtn.find('input:visible,button:visible').first().trigger('focus')
       }
     })
     .on('focus.bs.button.data-api blur.bs.button.data-api', '[data-toggle^="button"]', function (e) {
-      $(e.target).closest('.btn').toggleClass('focus', /^focus(in)?$/.test(e.type))
+      jQuery(e.target).closest('.btn').toggleClass('focus', /^focus(in)?jQuery/.test(e.type))
     })
 
 }(jQuery);
